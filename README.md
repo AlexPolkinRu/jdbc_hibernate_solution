@@ -1,0 +1,1 @@
+Решение задания по JDBC и Hibernate в ITM
