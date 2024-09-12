@@ -3,13 +3,16 @@ package jm.task.core.jdbc;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
+import jm.task.core.jdbc.util.Util;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static boolean useHibernate = true;
+
+    public static void main(String[] args) {
         // реализуйте алгоритм здесь
         List<User> users = new ArrayList<>();
 
@@ -18,6 +21,10 @@ public class Main {
         users.add(new User("Сергей", "Сергеев", (byte) 30));
         users.add(new User("Елена", "Ленина", (byte) 35));
 
+        doSomeOperation(users);
+    }
+
+    static void doSomeOperation(List<User> users) {
         UserService userService = new UserServiceImpl();
 
         userService.createUsersTable();
@@ -30,14 +37,24 @@ public class Main {
             );
         }
 
-        System.out.println(userService.getAllUsers());
+        List<User> readedUsers = userService.getAllUsers();
+        for (User user : readedUsers) {
+            System.out.println(user);
+        }
 
         userService.removeUserById(1);
 
-        System.out.println(userService.getAllUsers());
+        readedUsers = userService.getAllUsers();
+        for (User user : readedUsers) {
+            System.out.println(user);
+        }
 
         userService.cleanUsersTable();
         userService.dropUsersTable();
 
+        if (useHibernate) {
+            Util.closeSessionFactory();
+        }
     }
 }
+

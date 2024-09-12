@@ -1,5 +1,9 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,6 +21,8 @@ public class Util {
     private static final String PROPERTY_NAME_USER = "username";
     private static final String PROPERTY_NAME_PASS = "password";
 
+    private static SessionFactory sessionFactory = null;
+
     public static Connection getConnection() {
 
         try {
@@ -25,16 +31,27 @@ public class Util {
             throw new RuntimeException(e);
         }
 
-        try (
+        try {
             Connection connection = DriverManager.getConnection(
                     PROPERTIES.getProperty(PROPERTY_NAME_URL),
                     PROPERTIES.getProperty(PROPERTY_NAME_USER),
                     PROPERTIES.getProperty(PROPERTY_NAME_PASS)
-            )
-        ) {
+            );
             return connection;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        Configuration configuration = new Configuration()
+                .addAnnotatedClass(User.class);
+
+        sessionFactory = configuration.buildSessionFactory();
+        return sessionFactory;
+    }
+
+    public static void closeSessionFactory() {
+        sessionFactory.close();
     }
 }
