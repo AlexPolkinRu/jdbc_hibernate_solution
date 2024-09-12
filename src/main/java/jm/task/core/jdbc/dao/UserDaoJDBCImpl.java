@@ -113,7 +113,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 final Connection CONNECTION = Util.getConnection();
                 final Statement STATEMENT = CONNECTION.createStatement()
         ) {
-            String queryCleanUsersTable = "delete users;";
+            String queryCleanUsersTable = "delete from users;";
             STATEMENT.executeUpdate(queryCleanUsersTable);
         } catch (SQLException e) {
             throw new RuntimeException(e);
