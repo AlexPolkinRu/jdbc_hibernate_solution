@@ -5,7 +5,6 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 import java.util.List;
@@ -25,9 +24,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
             String queryCreateUsersTable = """
                             CREATE TABLE IF NOT EXISTS users (
@@ -37,8 +34,7 @@ public class UserDaoHibernateImpl implements UserDao {
                                 age SMALLINT NOT NULL
                             );
                     """;
-            NativeQuery nativeQuery = session.createNativeQuery(queryCreateUsersTable);
-            nativeQuery.executeUpdate();
+            session.createNativeQuery(queryCreateUsersTable).executeUpdate();
             session.getTransaction().commit();
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -47,13 +43,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void dropUsersTable() {
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
             String queryDropUsersTable = "DROP TABLE IF EXISTS users;";
-            NativeQuery nativeQuery = session.createNativeQuery(queryDropUsersTable);
-            nativeQuery.executeUpdate();
+            session.createNativeQuery(queryDropUsersTable).executeUpdate();
             session.getTransaction().commit();
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -62,9 +55,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
             User user = new User(name, lastName, age);
             session.save(user);
@@ -77,9 +68,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
             Query query = session.createQuery("delete User where id=:id");
             query.setParameter("id", id);
@@ -93,9 +82,7 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         List<User> users = null;
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
             users = session.createQuery("from User", User.class).list();
             session.getTransaction().commit();
@@ -107,12 +94,9 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        try (
-                Session session = SF.openSession()
-        ) {
+        try (Session session = SF.openSession()) {
             session.beginTransaction();
-            Query query = session.createQuery("delete User");
-            query.executeUpdate();
+            session.createQuery("delete User").executeUpdate();
             session.getTransaction().commit();
         } catch (HibernateException e) {
             e.printStackTrace();
